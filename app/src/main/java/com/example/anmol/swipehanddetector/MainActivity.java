@@ -48,28 +48,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void detectHand() {
-        String text;
+        String text = "Index";
         float d = xe - xs;
         if (d == 0.0f) {
-            text = "Both Hands";
+            text = "Index";
         } else {
             float s = (ye - ys) / d;
+            double l = Math.sqrt(Math.pow(d, 2) - Math.pow(ye - ys, 2));
             d = direction(d) * xe;
+
             if (d < 0 || s < lowerSlopeThreshold) {
-                text = "Left Hand";
+                text = "Left Thumb";
             } else if (s > higherSlopeThreshold) {
-                text = "Right Hand";
-            } else if (s >= 0) {
-                if (d < width * lowerDirectionThresholdPercent) {
-                    text = "Left Hand";
-                } else {
-                    text = "Right Hand";
+                text = "Right Thumb";
+            } else if (s > 0) {
+                if (l > 750) {
+                    text = "Index";
                 }
-            } else {
-                if (d > width * higherDirectionThresholdPercent) {
-                    text = "Right Hand";
+                else if (d < width * lowerDirectionThresholdPercent) {
+                    text = "Left Thumb";
                 } else {
-                    text = "Left Hand";
+                    text = "Right Thumb";
+                }
+            } else if (s <= 0) {
+                if (s > -.1) {
+                    if (l > 700) {
+                        text = "Index";
+                    } else {
+                        if (d > width * higherDirectionThresholdPercent) {
+                            text = "Right Thumb";
+                        } else {
+                            text = "Left Thumb";
+                        }
+                    }
+                } else {
+                    text = "Left Thumb";
                 }
             }
         }
