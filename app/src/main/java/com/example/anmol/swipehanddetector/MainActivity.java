@@ -1,10 +1,12 @@
 package com.example.anmol.swipehanddetector;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -48,29 +51,30 @@ public class MainActivity extends AppCompatActivity {
         String text;
         float d = xe - xs;
         if (d == 0.0f) {
-            text = "Can't detect";
+            text = "Both Hands";
         } else {
             float s = (ye - ys) / d;
             d = direction(d) * xe;
             if (d < 0 || s < lowerSlopeThreshold) {
-                text = "Left Thumb";
+                text = "Left Hand";
             } else if (s > higherSlopeThreshold) {
-                text = "Right Thumb";
+                text = "Right Hand";
             } else if (s >= 0) {
                 if (d < width * lowerDirectionThresholdPercent) {
-                    text = "Left Thumb";
+                    text = "Left Hand";
                 } else {
-                    text = "Right Thumb";
+                    text = "Right Hand";
                 }
             } else {
                 if (d > width * higherDirectionThresholdPercent) {
-                    text = "Right Thumb";
+                    text = "Right Hand";
                 } else {
-                    text = "Left Thumb";
+                    text = "Left Hand";
                 }
             }
         }
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        showNextScreen(text);
     }
 
     private float direction(float num) {
@@ -78,5 +82,15 @@ public class MainActivity extends AppCompatActivity {
             return 1.0f;
         }
         return -1.0f;
+    }
+
+    private void showNextScreen(String screen) {
+        if (screen.equals("Right Hand")) {
+            startActivity(new Intent(MainActivity.this, RightHandActivity.class));
+        } else if (screen.equals("Left Hand")) {
+            startActivity(new Intent(MainActivity.this, LeftHandActivity.class));
+        } else {
+            startActivity(new Intent(MainActivity.this, TwoHandActivity.class));
+        }
     }
 }
